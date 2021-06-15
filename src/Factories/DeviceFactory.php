@@ -11,19 +11,29 @@ class DeviceFactory
     public function __construct(array $args = [], $page = 1, $per_page = 10)
     {
         $args = wp_parse_args($args, [
-            's'          => '',
-            'orderby'    => 'login_at',
-            'order'      => 'DESC',
-            'start_date' => false,
-            'end_date'   => false,
+            's'                 => '',
+            'orderby'           => 'login_at',
+            'order'             => 'DESC',
+            'login_start_date'  => false,
+            'login_end_date'    => false,
+            'logout_start_date' => false,
+            'logout_end_date'   => false,
         ]);
 
-        if (!empty($args['start_date'])) {
-            $args['start_date'] = DateTime::createFromFormat(get_option('date_format') . ' H:i:s', $args['start_date'] . ' 00:00:00', wp_timezone())->setTimezone(new DateTimeZone('UTC'));
+        if (!empty($args['login_start_date'])) {
+            $args['login_start_date'] = DateTime::createFromFormat(get_option('date_format') . ' H:i:s', $args['login_start_date'] . ' 00:00:00', wp_timezone())->setTimezone(new DateTimeZone('UTC'));
         }
 
-        if (!empty($args['end_date'])) {
-            $args['end_date'] = DateTime::createFromFormat(get_option('date_format') . ' H:i:s', $args['end_date'] . ' 23:59:59', wp_timezone())->setTimezone(new DateTimeZone('UTC'));
+        if (!empty($args['login_end_date'])) {
+            $args['login_end_date'] = DateTime::createFromFormat(get_option('date_format') . ' H:i:s', $args['login_end_date'] . ' 23:59:59', wp_timezone())->setTimezone(new DateTimeZone('UTC'));
+        }
+
+        if (!empty($args['logout_start_date'])) {
+            $args['logout_start_date'] = DateTime::createFromFormat(get_option('date_format') . ' H:i:s', $args['logout_start_date'] . ' 00:00:00', wp_timezone())->setTimezone(new DateTimeZone('UTC'));
+        }
+
+        if (!empty($args['logout_end_date'])) {
+            $args['logout_end_date'] = DateTime::createFromFormat(get_option('date_format') . ' H:i:s', $args['logout_end_date'] . ' 23:59:59', wp_timezone())->setTimezone(new DateTimeZone('UTC'));
         }
 
         $args['orderby'] = in_array($args['orderby'], ['login_at', 'logout_at']) ? $args['orderby'] : 'login_at';
@@ -51,17 +61,31 @@ class DeviceFactory
             );
         }
 
-        if (!empty($this->args['start_date'])) {
+        if (!empty($this->args['login_start_date'])) {
             $wheres[] = $wpdb->prepare(
                 '(login_at >= %s)',
-                $this->args['start_date']->format('Y-m-d H:i:s')
+                $this->args['login_start_date']->format('Y-m-d H:i:s')
             );
         }
 
-        if (!empty($this->args['end_date'])) {
+        if (!empty($this->args['login_end_date'])) {
             $wheres[] = $wpdb->prepare(
                 '(login_at <= %s)',
-                $this->args['end_date']->format('Y-m-d H:i:s')
+                $this->args['login_end_date']->format('Y-m-d H:i:s')
+            );
+        }
+
+        if (!empty($this->args['logout_start_date'])) {
+            $wheres[] = $wpdb->prepare(
+                '(logout_at >= %s)',
+                $this->args['logout_start_date']->format('Y-m-d H:i:s')
+            );
+        }
+
+        if (!empty($this->args['logout_end_date'])) {
+            $wheres[] = $wpdb->prepare(
+                '(logout_at <= %s)',
+                $this->args['logout_end_date']->format('Y-m-d H:i:s')
             );
         }
 

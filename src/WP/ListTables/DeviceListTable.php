@@ -5,6 +5,7 @@ namespace Fsylum\LoginDevices\WP\ListTables;
 use DateTimeZone;
 use WP_List_Table;
 use Fsylum\LoginDevices\Helper;
+use Fsylum\LoginDevices\WP\Admin;
 use Fsylum\LoginDevices\Models\Device;
 use Fsylum\LoginDevices\Factories\DeviceFactory;
 
@@ -20,16 +21,14 @@ class DeviceListTable extends WP_List_Table
             true
         );
 
-        $this->_column_headers = array($this->get_columns(), [], $this->get_sortable_columns());
+        $this->_column_headers = [$this->get_columns(), [], $this->get_sortable_columns()];
         $result                = (new DeviceFactory($_REQUEST, $this->get_pagenum(), absint($per_page)))->get();
         $this->items           = $result['items'];
 
-        $this->set_pagination_args(
-            array(
-                'total_items' => $result['total_items'],
-                'per_page'    => $result['per_page'],
-            )
-        );
+        $this->set_pagination_args([
+            'total_items' => $result['total_items'],
+            'per_page'    => $result['per_page'],
+        ]);
     }
 
     public function no_items()
@@ -41,7 +40,7 @@ class DeviceListTable extends WP_List_Table
     {
         return [
             'cb'         => '<input type="checkbox">',
-            'user_id'    => __('User ID', 'fs-login-devices'),
+            'user_id'    => __('User', 'fs-login-devices'),
             'user_agent' => __('User Agent', 'fs-login-devices'),
             'login_at'   => __('Login Datetime', 'fs-login-devices'),
             'logout_at'  => __('Logout Datetime', 'fs-login-devices'),
@@ -65,11 +64,14 @@ class DeviceListTable extends WP_List_Table
         ], admin_url('admin-post.php'));
 
         $actions = [
-            'edit'   => sprintf('<a href="%s">' . __('Edit User', 'fs-login-devices') . '</a>',get_edit_user_link($item['user_id'])),
+            'edit'   => sprintf('<a href="%s">' . __('Edit User', 'fs-login-devices') . '</a>', get_edit_user_link($item['user_id'])),
             'delete' => sprintf('<a href="%s" class="js-delete-login-device">' . __('Delete Entry', 'fs-login-devices') . '</a>', wp_nonce_url($delete_url, 'fs-login-devices-delete-nonce')),
         ];
 
-        return sprintf('%s %s', $item['user_id'], $this->row_actions($actions));
+        $userdata = get_userdata($item['user_id']);
+        $column   = sprintf('<a href="%s" class="row-title">%s</a>', get_edit_user_link($item['user_id']), $userdata->display_name);
+
+        return sprintf('%s %s', $column, $this->row_actions($actions));
     }
 
     public function column_cb($item)
@@ -131,24 +133,22 @@ class DeviceListTable extends WP_List_Table
 
     private function process_bulk_actions()
     {
-        switch ($this->current_action()) {
-            case 'delete':
-                $redirect = $_SERVER['HTTP_REFERER'];
+        if ($this->current_action() === 'delete') {
+            $redirect = $_SERVER['HTTP_REFERER'];
 
-                if (empty($redirect)) {
-                    $redirect = admin_url(); // TODO
-                }
+            if (empty($redirect)) {
+                $redirect = Helper::listUrl();
+            }
 
-                if (!empty($_REQUEST['ids'])) {
-                    $result = (new Device)->bulkDelete(array_map('absint', $_REQUEST['ids']));
-                }
+            if (!empty($_REQUEST['ids'])) {
+                $result = (new Device)->bulkDelete(array_map('absint', $_REQUEST['ids']));
+            }
 
-                $redirect = add_query_arg([
-                    'deleted' => $result ? 'yes' : 'no',
-                ], $redirect);
+            $redirect = add_query_arg([
+                 Admin::QS_KEY => 'bulk-deleted',
+            ], $redirect);
 
-                Helper::jsRedirect($redirect);
-                break;
+            Helper::jsRedirect($redirect);
         }
     }
 }

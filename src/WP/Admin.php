@@ -2,12 +2,14 @@
 
 namespace Fsylum\LoginDevices\WP;
 
+use Fsylum\LoginDevices\Helper;
 use Fsylum\LoginDevices\Models\Device;
 use Fsylum\LoginDevices\Contracts\Runnable;
 use Fsylum\LoginDevices\WP\ListTables\DeviceListTable;
 
 class Admin implements Runnable
 {
+    const QS_KEY     = 'fsld-action';
     const CAPABILITY = 'manage_options';
     const KEY        = 'fs-login-devices';
 
@@ -72,15 +74,24 @@ class Admin implements Runnable
             return;
         }
 
-        if (!isset($_GET['deleted']) || sanitize_key($_GET['deleted']) !== 'yes') {
+        if (!isset($_GET[self::QS_KEY])) {
             return;
         }
-        ?>
-            <div class="updated notice is-dismissible">
-                <p><?php _e('Selected entries have been successfully deleted.'); ?>
-                </p>
-            </div>
-        <?php
+
+        switch (sanitize_text_field($_GET[self::QS_KEY])) {
+            case 'deleted':
+                $message = __('Selected entry have been deleted.', 'fs-login-devices');
+                break;
+
+            case 'bulk-deleted':
+                $message = __('Selected entries have been deleted.', 'fs-login-devices');
+                break;
+        }
+
+        printf(
+            '<div class="updated notice is-dismissible"><p>%s</p></div>',
+            $message
+        );
     }
 
     public function deleteLoginDevice()
@@ -93,11 +104,11 @@ class Admin implements Runnable
         $redirect = $_SERVER['HTTP_REFERER'];
 
         if (empty($redirect)) {
-            $redirect = admin_url(); // TODO
+            $redirect = Helper::listUrl();
         }
 
         $redirect = add_query_arg([
-            'deleted' => $result ? 'yes' : 'no',
+            self::QS_KEY => 'deleted',
         ], $redirect);
 
         wp_safe_redirect($redirect);

@@ -2,10 +2,18 @@
 
 namespace Fsylum\LoginDevices;
 
+use Fsylum\LoginDevices\WP\Admin;
 use Fsylum\LoginDevices\WP\Database;
 
 class Helper
 {
+    public function listUrl()
+    {
+        return add_query_arg([
+            'page' => Admin::KEY,
+        ], admin_url('users.php'));
+    }
+
     public static function jsRedirect($url = '')
     {
         echo '<script>window.location = "' . $url . '"</script>';

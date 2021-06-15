@@ -1,9 +1,11 @@
+const { __, _x, _n, _nx } = wp.i18n;
+
 (function ($) {
     $(document).ready(function () {
         $('.js-delete-login-device').on('click', function (e) {
             e.preventDefault();
 
-            if (window.confirm('This entry will be permanently deleted and cannot be recovered. Are you sure?')) {
+            if (window.confirm(__('This entry will be permanently deleted and cannot be recovered. Are you sure?', 'fs-login-devices'))) {
                 window.location = this.href;
             };
         });
@@ -11,7 +13,7 @@
         $('#doaction, #doaction2').on('click', function (e) {
             e.preventDefault();
 
-            if (window.confirm('The selected entries will be permanently deleted and cannot be recovered. Are you sure?')) {
+            if (window.confirm(__('The selected entries will be permanently deleted and cannot be recovered. Are you sure?', 'fs-login-devices'))) {
                 $(this).closest('form').trigger('submit');
             };
         });

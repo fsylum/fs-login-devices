@@ -23,7 +23,7 @@ class Asset implements Runnable
         wp_enqueue_script(
             self::KEY . '-js-admin',
             FSLD_PLUGIN_URL . '/assets/dist/js/admin.js',
-            ['jquery', 'jquery-ui-datepicker'],
+            ['jquery', 'jquery-ui-datepicker', 'wp-i18n'],
             wp_get_environment_type() === 'production' ? FSLD_PLUGIN_VERSION : time()
         );
 
@@ -33,5 +33,7 @@ class Asset implements Runnable
             [],
             wp_get_environment_type() === 'production' ? FSLD_PLUGIN_VERSION : time()
         );
+
+        wp_set_script_translations(self::KEY . '-js-admin', 'fs-login-devices');
     }
 }
