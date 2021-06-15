@@ -39,7 +39,7 @@ class Helper
 
         $row = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT id FROM {$table} WHERE user_id = %d AND user_agent = %s AND login_at IS NOT NULL and logout_at IS NULL LIMIT 1",
+                "SELECT id FROM {$table} WHERE user_id = %d AND user_agent = %s AND login_at IS NOT NULL and logout_at IS NULL ORDER BY login_at DESC LIMIT 1",
                 absint($user_id),
                 sanitize_text_field($_SERVER['HTTP_USER_AGENT'])
             )
