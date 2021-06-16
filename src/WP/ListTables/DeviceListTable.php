@@ -13,7 +13,7 @@ class DeviceListTable extends WP_List_Table
 {
     public function prepare_items()
     {
-        $this->process_bulk_actions();
+        $this->process_bulk_action();
 
         $per_page = get_user_meta(
             get_current_user_id(),
@@ -131,7 +131,7 @@ class DeviceListTable extends WP_List_Table
         echo ob_get_clean();
     }
 
-    private function process_bulk_actions()
+    private function process_bulk_action()
     {
         if ($this->current_action() === 'delete') {
             $redirect = $_SERVER['HTTP_REFERER'];
@@ -141,14 +141,10 @@ class DeviceListTable extends WP_List_Table
             }
 
             if (!empty($_REQUEST['ids'])) {
-                $result = (new Device)->bulkDelete(array_map('absint', $_REQUEST['ids']));
+                (new Device)->bulkDelete(array_map('absint', $_REQUEST['ids']));
             }
 
-            $redirect = add_query_arg([
-                 Admin::QS_KEY => 'bulk-deleted',
-            ], $redirect);
-
-            Helper::jsRedirect($redirect);
+            add_settings_error(Admin::KEY, Admin::KEY, __('Selected entries have been deleted.'), 'success');
         }
     }
 }

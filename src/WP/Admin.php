@@ -17,9 +17,9 @@ class Admin implements Runnable
     {
         add_action('admin_menu', [$this, 'addPage']);
         add_action('admin_notices', [$this, 'showNotice']);
-        add_action('admin_post_fsld_delete_device', [$this, 'deleteLoginDevice']);
         add_filter('set-screen-option', [$this, 'saveScreenOption'], 10, 3);
         add_filter('plugin_action_links_'  . FSLD_PLUGIN_BASENAME, [$this, 'addPageLink']);
+        add_action('admin_post_fsld_delete_device', [$this, 'deleteLoginDevice']);
     }
 
     public function addPage()
@@ -41,6 +41,7 @@ class Admin implements Runnable
 
                     <?php
                         $listTable->prepare_items();
+                        settings_errors(self::KEY);
                         $listTable->search_box(__('Search Entries', 'fs-login-devices'), 'fs-login-devices-search');
                         $listTable->display();
                     ?>
@@ -78,20 +79,21 @@ class Admin implements Runnable
             return;
         }
 
-        switch (sanitize_text_field($_GET[self::QS_KEY])) {
-            case 'deleted':
-                $message = __('Selected entry have been deleted.', 'fs-login-devices');
-                break;
-
-            case 'bulk-deleted':
-                $message = __('Selected entries have been deleted.', 'fs-login-devices');
-                break;
+        if (sanitize_text_field($_GET[self::QS_KEY]) !== 'deleted') {
+            return;
         }
 
         printf(
-            '<div class="updated notice is-dismissible"><p>%s</p></div>',
-            $message
+            '<div class="updated notice is-dismissible"><p><strong>%s</strong></p></div>',
+            __('Selected entry have been deleted.', 'fs-login-devices')
         );
+    }
+
+    public function addPageLink($links)
+    {
+        $links[] = '<a href="'. esc_url(Helper::listUrl()) .'">' . __('View Login Devices', 'fs-login-devices') . '</a>';
+
+        return $links;
     }
 
     public function deleteLoginDevice()
@@ -100,29 +102,13 @@ class Admin implements Runnable
             wp_die(__('Invalid request', 'fs-login-devices'));
         }
 
-        $result   = (new Device)->delete(absint($_REQUEST['id']));
-        $redirect = $_SERVER['HTTP_REFERER'];
-
-        if (empty($redirect)) {
-            $redirect = Helper::listUrl();
-        }
+        (new Device)->delete(absint($_REQUEST['id']));
 
         $redirect = add_query_arg([
             self::QS_KEY => 'deleted',
-        ], $redirect);
+        ], Helper::listUrl());
 
         wp_safe_redirect($redirect);
         exit;
-    }
-
-    public function addPageLink($links)
-    {
-        $url = add_query_arg([
-            'page' => self::KEY,
-        ], admin_url('tools.php'));
-
-        $links[] = '<a href="'. esc_url($url) .'" target="_blank">' . __('Settings', 'fs-login-devices') . '</a>';
-
-        return $links;
     }
 }

@@ -7,20 +7,14 @@ use Fsylum\LoginDevices\WP\Database;
 
 class Helper
 {
-    public function listUrl()
+    public static function listUrl()
     {
         return add_query_arg([
             'page' => Admin::KEY,
         ], admin_url('users.php'));
     }
 
-    public static function jsRedirect($url = '')
-    {
-        echo '<script>window.location = "' . $url . '"</script>';
-        exit;
-    }
-
-    public function recordLogin($user_id)
+    public static function recordLogin($user_id)
     {
         global $wpdb;
 
@@ -39,7 +33,7 @@ class Helper
         );
     }
 
-    public function recordLogout($user_id)
+    public static function recordLogout($user_id)
     {
         global $wpdb;
 
