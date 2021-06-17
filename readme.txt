@@ -24,6 +24,10 @@ This section describes how to install the plugin and get it working.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. View all login devices on Users > Login Devices.
 
+== Screenshots ==
+
+1. Listing page that show login history alongside the user agent and timestamps.
+
 == Changelog ==
 
 **1.0.0**
