@@ -134,12 +134,6 @@ class DeviceListTable extends WP_List_Table
     private function process_bulk_action()
     {
         if ($this->current_action() === 'delete') {
-            $redirect = $_SERVER['HTTP_REFERER'];
-
-            if (empty($redirect)) {
-                $redirect = Helper::listUrl();
-            }
-
             if (!empty($_REQUEST['ids'])) {
                 (new Device)->bulkDelete(array_map('absint', $_REQUEST['ids']));
             }
