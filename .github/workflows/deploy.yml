@@ -12,6 +12,7 @@ jobs:
     - uses: php-actions/composer@v6
     - name: Build
       run: |
+        npm install laravel-mix@latest
         npm install
         npx mix --production
     - name: WordPress Plugin Deploy
