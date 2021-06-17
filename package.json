@@ -1,6 +1,4 @@
 {
-  "name": "fsylum/fs-login-devices",
-  "version": "1.0.0",
   "description": "Track and display all users devices used during authentication process",
   "devDependencies": {
     "laravel-mix": "^6.0.11"
