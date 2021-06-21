@@ -1,16 +1,7 @@
 {
-    "name": "fsylum/fs-login-devices",
-    "description": "Track and display all users devices used during authentication process",
-    "authors": [
-        {
-            "name": "Firdaus Zahari",
-            "homepage": "https://fsylum.net"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Fsylum\\LoginDevices\\": "src/"
         }
-    },
-    "require": {}
+    }
 }
