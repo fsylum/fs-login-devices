@@ -14,7 +14,7 @@ Track and display all users devices used during authentication process
 
 This plugin allows you to track all user devices used when logging in to your site. The user agent, login date/time, and logout date/time (if the users log out from the site) are tracked automatically and persisted into the database for later viewing.
 
-You can find a list of login devices available under the Users > Login Devices submenu.
+You can find a list of all login devices available under the Users > Login Devices submenu.
 
 == Installation ==
 
