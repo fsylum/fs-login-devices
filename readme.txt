@@ -1,7 +1,7 @@
 === FS Login Devices ===
 Contributors: fsylum
 Tags: user, auth, session, user-agent
-Requires at least: 4.0
+Requires at least: 5.9
 Tested up to: 6.1.1
 Stable tag: 1.0.1
 Requires PHP: 8.0
