@@ -2,7 +2,7 @@
 Contributors: fsylum
 Tags: user, auth, session, user-agent
 Requires at least: 5.9
-Tested up to: 6.1.1
+Tested up to: 6.2
 Stable tag: 1.0.1
 Requires PHP: 8.0
 License: GPLv2 or later
